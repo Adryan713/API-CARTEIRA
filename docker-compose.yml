@@ -1,0 +1,34 @@
+version: ''
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: mysql_db
+    environment:
+      MYSQL_ROOT_PASSWORD: 
+      MYSQL_DATABASE: carteira
+    ports:
+      - ""
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+
+  api:
+    build: .
+    container_name: api
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_HOST=db
+      - DB_USER=
+      - DB_PASSWORD=
+      - DB_NAME=carteira
+      - JWT_SECRET=chave_secreta_extrablindada_2026
+    depends_on:
+      - db
+    restart:always
+
+volumes:
+  mysql_data:
